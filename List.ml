@@ -27,7 +27,7 @@ let init xs = List.tl @@ List.rev xs
 (* Does not work. *)
 let rev xs =
     let rec rev acc = function
-        | []    -> []
+        | []    -> acc
         | x::xs -> rev (x::acc) xs
     in rev [] xs
 
