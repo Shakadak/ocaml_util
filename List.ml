@@ -48,6 +48,13 @@ let rec map f = function
     | []    -> []
     | x::xs -> f x::map f xs
 
+let map' f l =
+  let rec aux acc = function
+    | [] -> acc
+    | x::xs -> aux (f x::acc) xs
+  in
+  aux [] l
+
 let rec any p = function
     | []                -> false
     | x::xs when p x    -> true
