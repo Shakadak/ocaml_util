@@ -36,6 +36,5 @@ module MyStringTree = BinaryTree (StringTree)
 let () =
   let tree = MyStringTree.create in
   let add = MyStringTree.insert in
-  add "Coucou" tree ;
-  add "Hello" tree ;
-  MyStringTree.print tree
+  let node = add "Coucou" tree in
+  MyStringTree.print node
