@@ -44,6 +44,10 @@ let rec foldl f acc = function
     | []    -> acc
     | x::xs -> foldl f (f acc x) xs
 
+let rec foldr f acc = function
+    | []    -> acc
+    | x::xs -> f (foldr f acc xs) xs
+
 let rec map f = function
     | []    -> []
     | x::xs -> f x::map f xs
