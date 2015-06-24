@@ -4,4 +4,4 @@ Some small utility function to help prototyping. Don't expect any performance no
 Proposition of improved function should be done with the identifier appended with `'`  
 like `append => append'`.
 
-Additional note: remember that currying forces the compileur/interprete to specialize the function.
+Additional note: remember that currying forces the compiler/interpreter to specialize the function.
