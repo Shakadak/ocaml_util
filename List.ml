@@ -76,3 +76,5 @@ let rec filter p = function
     | []                -> []
     | x::xs when p x    -> x::filter p xs
     | _::xs             -> filter p xs
+
+let map'' f xs = rev @@ foldr (fun acc x -> (f x)::acc) [] xs
