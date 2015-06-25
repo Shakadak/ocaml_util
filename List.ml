@@ -78,3 +78,12 @@ let rec filter p = function
     | _::xs             -> filter p xs
 
 let map'' f xs = rev @@ foldr (fun acc x -> (f x)::acc) [] xs
+
+let rec xcombine a l = match a with
+  | [] -> []
+  | x::xs ->
+    let rec aux = function
+      | [] -> []
+      | y::ys -> (x, y) :: aux ys
+    in
+    (aux l) @ (xcombine xs l)
