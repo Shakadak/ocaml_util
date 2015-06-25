@@ -27,7 +27,7 @@ let rec foldl f acc = function
 
 let rec foldr f acc = function
     | []    -> acc
-    | x::xs -> f (foldr f acc xs) xs
+    | x::xs -> f x (foldr f acc xs)
 
 let rec unfoldr f x = match f x with
     | None          -> []
@@ -73,6 +73,10 @@ let rec dropWhile p = function
 let span p xs = (takeWhile p xs, dropWhile p xs)
 
 let partition p xs = (filter p xs, filter (Combinator.(@.) not p) xs)
+
+let select p x (
+
+let partition' p xs = foldr (select p) ([], []) xs
 
 let rec groupBy p = function
     | []    -> []
