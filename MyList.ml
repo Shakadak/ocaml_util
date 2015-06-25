@@ -29,6 +29,10 @@ let rec foldr f acc = function
     | []    -> acc
     | x::xs -> f (foldr f acc xs) xs
 
+let rec unfoldr f x = match f x with
+    | None          -> []
+    | Some(x, y)    -> x::unfoldr f y
+
 let rec take n xs = match xs, n with
     | [], _     -> []
     | _, 0      -> []
