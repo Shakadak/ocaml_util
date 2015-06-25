@@ -74,7 +74,9 @@ let span p xs = (takeWhile p xs, dropWhile p xs)
 
 let partition p xs = (filter p xs, filter (Combinator.(@.) not p) xs)
 
-let select p x (
+let select p x (ts, fs) = match p x with
+    | true  -> (x::ts, fs)
+    | false -> (ts, x::fs)
 
 let partition' p xs = foldr (select p) ([], []) xs
 
