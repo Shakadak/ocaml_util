@@ -3,32 +3,47 @@ let rec take n xs = match xs, n with
     | _, 0      -> []
     | x::xs, n  -> x::take (n - 1) xs
 
-let rec take_while p = function
+let rec filter p = function
     | []                -> []
-    | x::xs when p x    -> x::take_while p xs
+    | x::xs when p x    -> x::filter p xs
+    | _::xs             -> filter p xs
+
+let rec takeWhile p = function
+    | []                -> []
+    | x::xs when p x    -> x::takeWhile p xs
     | _                 -> []
 
-let rec drop_while p = function
+let rec dropWhile p = function
     | []                -> []
-    | x::xs when p x    -> drop_while p xs
+    | x::xs when p x    -> dropWhile p xs
     | xs                -> xs
 
-let span p xs = (take_while p xs, drop_while p xs)
+let span p xs = (takeWhile p xs, dropWhile p xs)
 
-let rec group_by p = function
+let partition p xs = (filter p xs, filter (Combinator.(@.) not p) xs)
+
+let rec groupBy p = function
     | []    -> []
     | x::xs -> let (ys, zs) = span (p x) xs
-    in (x::ys)::group_by p zs
+    in (x::ys)::groupBy p zs
 
-let last xs = List.hd @@ List.rev xs
+let head = function
+    []      -> invalid_arg "head: empty list"
+    | x::_  -> x
 
-let init xs = List.tl @@ List.rev xs
+let tail = function
+    []      -> invalid_arg "head: empty list"
+    | _::xs -> xs
 
 let rev xs =
     let rec rev acc = function
         | []    -> acc
         | x::xs -> rev (x::acc) xs
     in rev [] xs
+
+let last xs = head @@ rev xs
+
+let init xs = tail @@ rev xs
 
 let rec append xs ys = match xs with
     | []    -> ys
@@ -57,7 +72,7 @@ let map' f l =
     | [] -> acc
     | x::xs -> aux (f x::acc) xs
   in
-  aux [] l
+  aux [] l |> rev
 
 let rec any p = function
     | []                -> false
@@ -72,9 +87,4 @@ let null = function
 
 let length xs = foldl (fun acc _ -> acc + 1) 0 xs
 
-let rec filter p = function
-    | []                -> []
-    | x::xs when p x    -> x::filter p xs
-    | _::xs             -> filter p xs
-
-let map'' f xs = rev @@ foldr (fun acc x -> (f x)::acc) [] xs
+let map'' f xs = rev @@ foldl (fun acc x -> (f x)::acc) [] xs
