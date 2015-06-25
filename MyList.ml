@@ -1,13 +1,19 @@
 let prepend x xs = x::xs
 (* Equivalent to (::) but unfeasible in ocaml *)
 
-let rec index = uncurry function
+let rec index xs n = match xs, n with
     | xs, n when n < 0  -> invalid_arg "index: negative index"
     | [], _             -> invalid_arg "index: index too large"
     | x::_, 0           -> x
     | _::xs, n          -> index xs (n - 1)
 
-let build g = g prepend []
+(* let build g = g prepend []
+ * I don't have the level to understand it yet,
+ * no point in making it available *)
+
+let rec replicate n x = match n, x with
+    | 0, _  -> []
+    | n, x  -> x::replicate (n - 1) x
 
 let rev xs =
     let rec rev acc = function
@@ -29,18 +35,18 @@ let rec take n xs = match xs, n with
     | x::xs, n  -> x::take (n - 1) xs
 
 let take' n xs =
-    let take n xs acc = match n, xs with
+    let rec take' n xs acc = match n, xs with
     | n, _ when n <= 0  -> acc
     | _, []             -> acc
-    | n, x::xs          -> take (n - 1) xs (x::acc)
-    in take n xs [] |> rev
+    | n, x::xs          -> take' (n - 1) xs (x::acc)
+    in take' n xs [] |> rev
 
-let rec take'' = curry function
+let rec take'' n xs = match n, xs with
     | n, _ when n <= 0  -> []
     | _, []             -> []
     | n, x::xs          -> x::take'' (n - 1) xs
 
-let rec drop = curry function
+let rec drop n xs = match n, xs with
     | n, xs when n <= 0 -> xs
     | _, []             -> []
     | n, _::xs          -> drop (n - 1) xs
