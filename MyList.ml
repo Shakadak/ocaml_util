@@ -1,7 +1,49 @@
+let prepend x xs = x::xs
+(* Equivalent to (::) but unfeasible in ocaml *)
+
+let rec index = uncurry function
+    | xs, n when n < 0  -> invalid_arg "index: negative index"
+    | [], _             -> invalid_arg "index: index too large"
+    | x::_, 0           -> x
+    | _::xs, n          -> index xs (n - 1)
+
+let build g = g prepend []
+
+let rev xs =
+    let rec rev acc = function
+        | []    -> acc
+        | x::xs -> rev (x::acc) xs
+    in rev [] xs
+
+let rec foldl f acc = function
+    | []    -> acc
+    | x::xs -> foldl f (f acc x) xs
+
+let rec foldr f acc = function
+    | []    -> acc
+    | x::xs -> f (foldr f acc xs) xs
+
 let rec take n xs = match xs, n with
     | [], _     -> []
     | _, 0      -> []
     | x::xs, n  -> x::take (n - 1) xs
+
+let take' n xs =
+    let take n xs acc = match n, xs with
+    | n, _ when n <= 0  -> acc
+    | _, []             -> acc
+    | n, x::xs          -> take (n - 1) xs (x::acc)
+    in take n xs [] |> rev
+
+let rec take'' = curry function
+    | n, _ when n <= 0  -> []
+    | _, []             -> []
+    | n, x::xs          -> x::take'' (n - 1) xs
+
+let rec drop = curry function
+    | n, xs when n <= 0 -> xs
+    | _, []             -> []
+    | n, _::xs          -> drop (n - 1) xs
 
 let rec filter p = function
     | []                -> []
@@ -35,12 +77,6 @@ let tail = function
     []      -> invalid_arg "head: empty list"
     | _::xs -> xs
 
-let rev xs =
-    let rec rev acc = function
-        | []    -> acc
-        | x::xs -> rev (x::acc) xs
-    in rev [] xs
-
 let last xs = head @@ rev xs
 
 let init xs = tail @@ rev xs
@@ -54,14 +90,6 @@ let append' xs ys =
         | []    -> acc
         | x::xs -> append' (x::acc) xs
     in append' ys (rev xs)
-
-let rec foldl f acc = function
-    | []    -> acc
-    | x::xs -> foldl f (f acc x) xs
-
-let rec foldr f acc = function
-    | []    -> acc
-    | x::xs -> f (foldr f acc xs) xs
 
 let rec map f = function
     | []    -> []
@@ -88,11 +116,6 @@ let null = function
 let length xs = foldl (fun acc _ -> acc + 1) 0 xs
 
 let map'' f xs = rev @@ foldl (fun acc x -> (f x)::acc) [] xs
-
-let rec filter p = function
-    | []                -> []
-    | x::xs when p x    -> x::filter p xs
-    | _::xs             -> filter p xs
 
 let rec xcombine a l = match a with
   | [] -> []
